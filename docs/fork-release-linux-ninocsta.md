@@ -55,6 +55,24 @@ git rebase upstream/master
 git push --force-with-lease origin master --no-verify
 ```
 
+## 3.1) Quando você tem mudanças locais (diff) e quer atualizar
+
+```bash
+cd ~/Documentos/superprod
+
+git add -A
+git commit -m "feat(daily): improve daily workflow and task linking" --no-verify
+
+git fetch upstream
+git checkout master
+git rebase upstream/master
+# se houver conflito:
+#   git add <arquivo>
+#   git rebase --continue
+
+git push --force-with-lease origin master --no-verify
+```
+
 ### Conflito no rebase
 
 ```bash
@@ -100,6 +118,29 @@ Se quiser menos dor de cabeça com conflito no `rebase`, use em blocos:
 
 ```bash
 cd ~/Documentos/superprod
+
+git fetch upstream
+git checkout master
+git rebase upstream/master
+# se houver conflito:
+#   git add <arquivo>
+#   git rebase --continue
+
+git push --force-with-lease origin master --no-verify
+
+npm ci
+npm run buildAllElectron:noTests:prod
+npx electron-builder --linux deb
+sudo dpkg -i .tmp/app-builds/superProductivity*.deb
+```
+
+## 5.2) Copiar e colar completo (COMMIT + UPDATE + BUILD + INSTALL)
+
+```bash
+cd ~/Documentos/superprod
+
+git add -A
+git commit -m "feat(daily): improve daily workflow and task linking" --no-verify
 
 git fetch upstream
 git checkout master

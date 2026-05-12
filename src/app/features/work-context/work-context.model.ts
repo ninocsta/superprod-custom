@@ -47,6 +47,8 @@ export type DailyJournalEntry = Readonly<{
   todayPlan: string;
   blockers: string;
   notes?: string;
+  yesterdayTaskIds?: ReadonlyArray<string>;
+  todayPlanTaskIds?: ReadonlyArray<string>;
   updatedAt: number;
 }>;
 

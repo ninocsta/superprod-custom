@@ -32,47 +32,183 @@
       </div>
     </div>
 
-    <div class="daily-checkin__fields">
-      <div class="daily-checkin__field">
-        <h3>{{ T.PDS.DAILY_YESTERDAY | translate }}</h3>
-        <inline-markdown
-          (changed)="updateDailyField('yesterday', $event)"
-          [isShowChecklistToggle]="false"
-          [isShowControls]="true"
-          [model]="dailyYesterday()"
-          [placeholderTxt]="T.PDS.DAILY_YESTERDAY | translate"
-        ></inline-markdown>
-      </div>
-      <div class="daily-checkin__field">
-        <h3>{{ T.PDS.DAILY_PLAN_TODAY | translate }}</h3>
-        <inline-markdown
-          (changed)="updateDailyField('todayPlan', $event)"
-          [isShowChecklistToggle]="false"
-          [isShowControls]="true"
-          [model]="dailyTodayPlan()"
-          [placeholderTxt]="T.PDS.DAILY_PLAN_TODAY | translate"
-        ></inline-markdown>
-      </div>
-      <div class="daily-checkin__field">
-        <h3>{{ T.PDS.DAILY_BLOCKERS | translate }}</h3>
-        <inline-markdown
-          (changed)="updateDailyField('blockers', $event)"
-          [isShowChecklistToggle]="false"
-          [isShowControls]="true"
-          [model]="dailyBlockers()"
-          [placeholderTxt]="T.PDS.DAILY_BLOCKERS | translate"
-        ></inline-markdown>
-      </div>
-      <div class="daily-checkin__field">
-        <h3>{{ T.PDS.DAILY_NOTES | translate }}</h3>
-        <inline-markdown
-          (changed)="updateDailyField('notes', $event)"
-          [isShowChecklistToggle]="false"
-          [isShowControls]="true"
-          [model]="dailyNotes()"
-          [placeholderTxt]="T.PDS.DAILY_NOTES | translate"
-        ></inline-markdown>
-      </div>
+    <div class="daily-panels">
+      @for (entry of visibleDayEntries(); track trackByDayStr($index, entry)) {
+        <article class="daily-panel">
+          <div class="daily-panel__title-row">
+            <h3>
+              @if (entry.label) {
+                {{ entry.label | translate }}
+              } @else {
+                {{ T.PDS.DAILY_SELECTED_DAY | translate }}
+              }
+            </h3>
+            <span class="daily-panel__date">{{ entry.dayStr }}</span>
+          </div>
+
+          <div class="daily-checkin__field">
+            <h4>{{ T.PDS.DAILY_YESTERDAY | translate }}</h4>
+            <textarea
+              (input)="onDailyTextInput(entry.dayStr, 'yesterday', $event)"
+              [placeholder]="T.PDS.DAILY_YESTERDAY | translate"
+              [value]="getDailyField(entry.dayStr, 'yesterday')"
+              class="daily-textarea"
+            ></textarea>
+
+            <div class="daily-links">
+              <label>{{ T.PDS.DAILY_LINK_TASKS_YESTERDAY | translate }}</label>
+              <select-task-minimal
+                (taskSelected)="onTaskPicked(entry.dayStr, 'yesterdayTaskIds', $event)"
+                (textChanged)="
+                  setTaskSearchInput(entry.dayStr, 'yesterdayTaskIds', $event)
+                "
+                (keyPressed)="
+                  onTaskSearchKeyDown(entry.dayStr, 'yesterdayTaskIds', $event)
+                "
+                [placeholder]="T.PDS.DAILY_TASK_SEARCH_PLACEHOLDER | translate"
+                [isIncludeDoneTasks]="false"
+                [isLimitToProject]="false"
+              ></select-task-minimal>
+              @if (canCreateTaskFromSearch(entry.dayStr, 'yesterdayTaskIds')) {
+                <button
+                  (click)="createTaskFromSearch(entry.dayStr, 'yesterdayTaskIds')"
+                  class="daily-links__create-task"
+                  type="button"
+                >
+                  {{ T.PDS.DAILY_CREATE_TASK | translate }}
+                  "{{ getTaskSearchInput(entry.dayStr, 'yesterdayTaskIds') }}"
+                </button>
+              }
+
+              <div class="daily-links__linked-list">
+                @for (
+                  linkedTask of getLinkedTasks(entry.dayStr, 'yesterdayTaskIds');
+                  track trackByTaskId($index, linkedTask)
+                ) {
+                  <div class="daily-links__linked-item">
+                    <button
+                      (click)="openTask(linkedTask.id)"
+                      class="daily-links__linked-task-open"
+                      type="button"
+                    >
+                      {{ linkedTask.title }}
+                    </button>
+                    <button
+                      (click)="
+                        removeTaskFromDaily(
+                          entry.dayStr,
+                          'yesterdayTaskIds',
+                          linkedTask.id
+                        )
+                      "
+                      [attr.aria-label]="T.PDS.DAILY_REMOVE_LINKED_TASK | translate"
+                      class="daily-links__remove"
+                      type="button"
+                    >
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                } @empty {
+                  <div class="daily-links__empty">
+                    {{ T.PDS.DAILY_NO_LINKED_TASKS | translate }}
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="daily-checkin__field">
+            <h4>{{ T.PDS.DAILY_PLAN_TODAY | translate }}</h4>
+            <textarea
+              (input)="onDailyTextInput(entry.dayStr, 'todayPlan', $event)"
+              [placeholder]="T.PDS.DAILY_PLAN_TODAY | translate"
+              [value]="getDailyField(entry.dayStr, 'todayPlan')"
+              class="daily-textarea"
+            ></textarea>
+
+            <div class="daily-links">
+              <label>{{ T.PDS.DAILY_LINK_TASKS_TODAY | translate }}</label>
+              <select-task-minimal
+                (taskSelected)="onTaskPicked(entry.dayStr, 'todayPlanTaskIds', $event)"
+                (textChanged)="
+                  setTaskSearchInput(entry.dayStr, 'todayPlanTaskIds', $event)
+                "
+                (keyPressed)="
+                  onTaskSearchKeyDown(entry.dayStr, 'todayPlanTaskIds', $event)
+                "
+                [placeholder]="T.PDS.DAILY_TASK_SEARCH_PLACEHOLDER | translate"
+                [isIncludeDoneTasks]="false"
+                [isLimitToProject]="false"
+              ></select-task-minimal>
+              @if (canCreateTaskFromSearch(entry.dayStr, 'todayPlanTaskIds')) {
+                <button
+                  (click)="createTaskFromSearch(entry.dayStr, 'todayPlanTaskIds')"
+                  class="daily-links__create-task"
+                  type="button"
+                >
+                  {{ T.PDS.DAILY_CREATE_TASK | translate }}
+                  "{{ getTaskSearchInput(entry.dayStr, 'todayPlanTaskIds') }}"
+                </button>
+              }
+
+              <div class="daily-links__linked-list">
+                @for (
+                  linkedTask of getLinkedTasks(entry.dayStr, 'todayPlanTaskIds');
+                  track trackByTaskId($index, linkedTask)
+                ) {
+                  <div class="daily-links__linked-item">
+                    <button
+                      (click)="openTask(linkedTask.id)"
+                      class="daily-links__linked-task-open"
+                      type="button"
+                    >
+                      {{ linkedTask.title }}
+                    </button>
+                    <button
+                      (click)="
+                        removeTaskFromDaily(
+                          entry.dayStr,
+                          'todayPlanTaskIds',
+                          linkedTask.id
+                        )
+                      "
+                      [attr.aria-label]="T.PDS.DAILY_REMOVE_LINKED_TASK | translate"
+                      class="daily-links__remove"
+                      type="button"
+                    >
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                } @empty {
+                  <div class="daily-links__empty">
+                    {{ T.PDS.DAILY_NO_LINKED_TASKS | translate }}
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="daily-checkin__field">
+            <h4>{{ T.PDS.DAILY_BLOCKERS | translate }}</h4>
+            <textarea
+              (input)="onDailyTextInput(entry.dayStr, 'blockers', $event)"
+              [placeholder]="T.PDS.DAILY_BLOCKERS | translate"
+              [value]="getDailyField(entry.dayStr, 'blockers')"
+              class="daily-textarea"
+            ></textarea>
+          </div>
+
+          <div class="daily-checkin__field">
+            <h4>{{ T.PDS.DAILY_NOTES | translate }}</h4>
+            <textarea
+              (input)="onDailyTextInput(entry.dayStr, 'notes', $event)"
+              [placeholder]="T.PDS.DAILY_NOTES | translate"
+              [value]="getDailyField(entry.dayStr, 'notes')"
+              class="daily-textarea"
+            ></textarea>
+          </div>
+        </article>
+      }
     </div>
   </section>
 </div>
