@@ -12,6 +12,7 @@ export const DEFAULT_PROJECT: Project = {
   isHiddenFromMenu: false,
   isArchived: false,
   isEnableBacklog: false,
+  isEnableDailyTracking: false,
   backlogTaskIds: [],
   noteIds: [],
   ...WORK_CONTEXT_DEFAULT_COMMON,

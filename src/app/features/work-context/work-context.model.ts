@@ -39,6 +39,19 @@ export type WorkStartEnd = Readonly<WorkStartEndCopy>;
 
 export type WorkContextAdvancedCfg = Readonly<{
   worklogExportSettings: WorklogExportSettings;
+  dailyJournal?: DailyJournal;
+}>;
+
+export type DailyJournalEntry = Readonly<{
+  yesterday: string;
+  todayPlan: string;
+  blockers: string;
+  notes?: string;
+  updatedAt: number;
+}>;
+
+export type DailyJournal = Readonly<{
+  entriesByDay: Readonly<Record<string, DailyJournalEntry>>;
 }>;
 
 // TODO handle more strictly
@@ -77,6 +90,7 @@ export interface WorkContextCopy extends WorkContextCommon {
   icon?: string | null;
   routerLink: string;
   isEnableBacklog?: boolean;
+  isEnableDailyTracking?: boolean;
   backlogTaskIds?: string[];
   noteIds: string[];
   type: WorkContextType;

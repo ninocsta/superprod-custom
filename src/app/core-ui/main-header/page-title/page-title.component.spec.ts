@@ -64,6 +64,8 @@ describe('PageTitleComponent', () => {
     const cases: Array<[string, string]> = [
       ['/schedule', T.MH.SCHEDULE],
       ['/planner', T.MH.PLANNER],
+      ['/daily', T.MH.DAILY],
+      ['/daily/2026-05-12', T.MH.DAILY],
       ['/boards', T.MH.BOARDS],
       ['/habits', T.MH.HABITS],
       ['/search', T.MH.SEARCH],

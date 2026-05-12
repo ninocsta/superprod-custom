@@ -13,13 +13,20 @@ export const createProject = (
     backlogTaskIds: [],
     noteIds: [],
     isEnableBacklog: false,
+    isEnableDailyTracking: false,
     issueIntegrationCfgs: {},
     advancedCfg: {
-      isAutoMarkDone: false,
-      isNotifyBeforeTimeEstimate: false,
-      isNotifyWhenTimeEstimateExceeded: false,
-      isRelatedAfterFinish: false,
-      isRepeatAfterCompletion: false,
+      worklogExportSettings: {
+        cols: ['DATE', 'START', 'END', 'TIME_CLOCK', 'TITLES_INCLUDING_SUB'],
+        roundWorkTimeTo: null,
+        roundStartTimeTo: null,
+        roundEndTimeTo: null,
+        separateTasksBy: ' | ',
+        groupBy: 'DATE',
+      },
+      dailyJournal: {
+        entriesByDay: {},
+      },
     },
     ...rest,
   } as Project;

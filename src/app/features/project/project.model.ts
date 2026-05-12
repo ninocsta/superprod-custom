@@ -15,6 +15,7 @@ export interface ProjectBasicCfg {
   isArchived?: boolean;
   isHiddenFromMenu?: boolean;
   isEnableBacklog?: boolean;
+  isEnableDailyTracking?: boolean;
   taskIds: string[];
   backlogTaskIds: string[];
   noteIds: string[];

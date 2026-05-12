@@ -248,7 +248,7 @@ export const createWindow = async ({
   const url = customUrl
     ? customUrl
     : IS_DEV
-      ? 'http://localhost:4200'
+      ? 'http://localhost:6060'
       : `file://${normalize(join(__dirname, '../.tmp/angular-dist/browser/index.html'))}`;
 
   mainWin.loadURL(url).then(() => {

@@ -298,11 +298,10 @@ export class DailySummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this._activatedRoute.paramMap
       .pipe(takeUntil(this._onDestroy$))
       .subscribe((params) => {
-        const dayStr = params.get('dayStr');
-        if (dayStr) {
-          this.isForToday = false;
-          this.dayStr = dayStr;
-        }
+        const routeDayStr = params.get('dayStr');
+        const effectiveDayStr = routeDayStr || this._dateService.todayStr();
+        this.dayStr = effectiveDayStr;
+        this.isForToday = effectiveDayStr === this._dateService.todayStr();
       });
   }
 

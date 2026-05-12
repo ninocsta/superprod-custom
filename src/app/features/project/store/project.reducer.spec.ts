@@ -2,9 +2,12 @@ import { projectReducer } from './project.reducer';
 import { fakeEntityStateFromArray } from '../../../util/fake-entity-state-from-array';
 import { Project } from '../project.model';
 import {
+  addProject,
   moveProjectTaskInBacklogList,
   moveProjectTaskToBacklogList,
   moveProjectTaskToRegularList,
+  updateProject,
+  updateProjectAdvancedCfg,
   updateProjectOrder,
 } from './project.actions';
 import { moveNoteToOtherProject } from '../../note/store/note.actions';
@@ -13,6 +16,135 @@ import { moveTaskInTodayList } from '../../work-context/store/work-context-meta.
 import { WorkContextType } from '../../work-context/work-context.model';
 
 describe('projectReducer', () => {
+  describe('daily tracking config', () => {
+    it('should keep isEnableDailyTracking on addProject', () => {
+      const project = {
+        id: 'P1',
+        title: 'Project 1',
+        taskIds: [],
+        backlogTaskIds: [],
+        noteIds: [],
+        advancedCfg: {
+          worklogExportSettings: {
+            cols: ['DATE'],
+            roundWorkTimeTo: null,
+            roundStartTimeTo: null,
+            roundEndTimeTo: null,
+            separateTasksBy: ' | ',
+            groupBy: 'DATE',
+          },
+        },
+        theme: {},
+        isEnableDailyTracking: true,
+      } as unknown as Project;
+
+      const result = projectReducer(undefined, addProject({ project }));
+      expect((result.entities as any).P1.isEnableDailyTracking).toBeTrue();
+    });
+
+    it('should keep isEnableDailyTracking on updateProject', () => {
+      const state = fakeEntityStateFromArray([
+        {
+          id: 'P1',
+          isEnableDailyTracking: false,
+          advancedCfg: {
+            worklogExportSettings: {
+              cols: ['DATE'],
+              roundWorkTimeTo: null,
+              roundStartTimeTo: null,
+              roundEndTimeTo: null,
+              separateTasksBy: ' | ',
+              groupBy: 'DATE',
+            },
+          },
+        },
+      ] as Partial<Project>[]);
+
+      const result = projectReducer(
+        state as any,
+        updateProject({
+          project: {
+            id: 'P1',
+            changes: {
+              isEnableDailyTracking: true,
+            },
+          },
+        }) as any,
+      );
+      expect((result.entities as any).P1.isEnableDailyTracking).toBeTrue();
+    });
+
+    it('should merge daily journal without losing worklogExportSettings', () => {
+      const day1 = '2026-05-10';
+      const day2 = '2026-05-11';
+      const state = fakeEntityStateFromArray([
+        {
+          id: 'P1',
+          advancedCfg: {
+            worklogExportSettings: {
+              cols: ['DATE', 'START'],
+              roundWorkTimeTo: null,
+              roundStartTimeTo: null,
+              roundEndTimeTo: null,
+              separateTasksBy: ' - ',
+              groupBy: 'DATE',
+            },
+            dailyJournal: {
+              entriesByDay: {
+                [day1]: {
+                  yesterday: 'A',
+                  todayPlan: 'B',
+                  blockers: 'C',
+                  notes: 'D',
+                  updatedAt: 1,
+                },
+              },
+            },
+          },
+        },
+      ] as Partial<Project>[]);
+
+      const result = projectReducer(
+        state as any,
+        updateProjectAdvancedCfg({
+          projectId: 'P1',
+          sectionKey: 'dailyJournal',
+          data: {
+            entriesByDay: {
+              [day2]: {
+                yesterday: 'Y',
+                todayPlan: 'P',
+                blockers: 'B',
+                notes: 'N',
+                updatedAt: 2,
+              },
+            },
+          },
+        }) as any,
+      );
+
+      expect((result.entities as any).P1.advancedCfg.worklogExportSettings).toEqual(
+        (state.entities as any).P1.advancedCfg.worklogExportSettings,
+      );
+      expect((result.entities as any).P1.advancedCfg.dailyJournal.entriesByDay).toEqual({
+        [day1]: {
+          yesterday: 'A',
+          todayPlan: 'B',
+          blockers: 'C',
+          notes: 'D',
+          updatedAt: 1,
+        },
+        [day2]: {
+          yesterday: 'Y',
+          todayPlan: 'P',
+          blockers: 'B',
+          notes: 'N',
+          updatedAt: 2,
+        },
+      });
+    });
+  });
+
   describe('UpdateProjectOrder', () => {
     it('Should re-add archived projects if incomplete list is given as param', () => {
       const s = fakeEntityStateFromArray([

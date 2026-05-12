@@ -1,0 +1,69 @@
+@use '../../../styles/_globals.scss' as *;
+
+.page-wrapper {
+  text-align: center;
+}
+
+.done-headline {
+  margin-top: var(--s4);
+  margin-bottom: calc(var(--s3) - var(--s));
+}
+
+.daily-checkin {
+  margin: 0 auto var(--s5);
+  max-width: var(--component-max-width);
+  padding: var(--s2);
+  text-align: left;
+  border-radius: var(--card-border-radius);
+  @include extraBorder();
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s);
+    margin-bottom: var(--s2);
+
+    h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--s-half);
+  }
+
+  &__date {
+    min-width: 145px;
+    border: 1px solid var(--separator-color);
+    border-radius: var(--card-border-radius);
+    padding: 6px 8px;
+    background: transparent;
+    color: inherit;
+  }
+
+  &__fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s2);
+
+    @include mq(xs) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__field {
+    h3 {
+      margin: 0 0 var(--s-half);
+      font-size: 0.95rem;
+      opacity: 0.8;
+    }
+
+    inline-markdown {
+      display: block;
+    }
+  }
+}

@@ -155,6 +155,55 @@ describe('ProjectService', () => {
     store.resetSelectors();
   });
 
+  describe('upsertDailyEntry', () => {
+    it('should merge entry into advancedCfg and call update()', async () => {
+      const day1 = '2026-05-11';
+      const day2 = '2026-05-12';
+      const project = createProject({
+        id: 'project-1',
+        advancedCfg: {
+          ...createProject().advancedCfg,
+          dailyJournal: {
+            entriesByDay: {
+              [day1]: {
+                yesterday: 'did old',
+                todayPlan: 'plan old',
+                blockers: 'none',
+                notes: 'old note',
+                updatedAt: 1,
+              },
+            },
+          },
+        },
+      });
+
+      spyOn(service, 'getByIdOnce$').and.returnValue(of(project));
+      const updateSpy = spyOn(service, 'update');
+
+      await service.upsertDailyEntry('project-1', day2, {
+        yesterday: 'did',
+        todayPlan: 'plan',
+        blockers: 'blocked',
+        notes: 'note',
+        updatedAt: 2,
+      });
+
+      expect(updateSpy).toHaveBeenCalled();
+      const [, changes] = updateSpy.calls.mostRecent().args;
+      expect((changes.advancedCfg as any).worklogExportSettings).toEqual(
+        project.advancedCfg.worklogExportSettings,
+      );
+      expect((changes.advancedCfg as any).dailyJournal.entriesByDay[day1]).toBeTruthy();
+      expect((changes.advancedCfg as any).dailyJournal.entriesByDay[day2]).toEqual({
+        yesterday: 'did',
+        todayPlan: 'plan',
+        blockers: 'blocked',
+        notes: 'note',
+        updatedAt: 2,
+      });
+    });
+  });
+
   describe('duplicateProject', () => {
     beforeEach(() => {
       spyOn(service, 'add').and.callFake(() => 'new-project-id');

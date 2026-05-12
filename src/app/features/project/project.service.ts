@@ -47,6 +47,8 @@ import { selectNoteFeatureState } from '../note/store/note.reducer';
 import { addNote } from '../note/store/note.actions';
 import { DialogConfirmComponent } from '../../ui/dialog-confirm/dialog-confirm.component';
 import { LOCAL_ACTIONS } from '../../util/local-actions.token';
+import { DailyJournalEntry } from '../work-context/work-context.model';
+import { upsertDailyEntryByDay } from './daily-journal.util';
 
 @Injectable({
   providedIn: 'root',
@@ -225,6 +227,20 @@ export class ProjectService {
 
   moveTaskToBacklog(taskId: string, projectId: string): void {
     this._store$.dispatch(moveProjectTaskToBacklogListAuto({ taskId, projectId }));
+  }
+
+  async upsertDailyEntry(
+    projectId: string,
+    dayStr: string,
+    entry: DailyJournalEntry,
+  ): Promise<void> {
+    const project = await firstValueFrom(this.getByIdOnce$(projectId));
+    if (!project) {
+      throw new Error(`Project ${projectId} not found`);
+    }
+    this.update(projectId, {
+      advancedCfg: upsertDailyEntryByDay(project, dayStr, entry),
+    });
   }
 
   updateOrder(ids: string[]): void {

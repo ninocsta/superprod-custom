@@ -281,6 +281,18 @@ export type DailySummaryNote = Readonly<{
   lastUpdateDayStr?: string;
 }>;
 
+export type DailyJournalEntry = Readonly<{
+  yesterday: string;
+  todayPlan: string;
+  blockers: string;
+  notes?: string;
+  updatedAt: number;
+}>;
+
+export type DailyJournal = Readonly<{
+  entriesByDay: Readonly<Record<string, DailyJournalEntry>>;
+}>;
+
 // NOTE: config properties being undefined always means that they should be overwritten with the default value
 export type GlobalConfigState = Readonly<{
   appFeatures: AppFeaturesConfig;
@@ -309,6 +321,7 @@ export type GlobalConfigState = Readonly<{
 
   sync: SyncConfig;
   dailySummaryNote?: DailySummaryNote;
+  dailyJournal?: DailyJournal;
 }>;
 
 export type GlobalConfigSectionKey = keyof GlobalConfigState | 'EMPTY';
@@ -329,6 +342,7 @@ export type GlobalSectionConfig =
   | ScheduleConfig
   | ReminderConfig
   | DailySummaryNote
+  | DailyJournal
   | SyncConfig
   | ClipboardImagesConfig
   | TaskWidgetConfig;

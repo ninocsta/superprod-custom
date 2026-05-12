@@ -214,6 +214,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "open": false,
+            "port": 6060,
             "buildTarget": "sp2:build"
           },
           "configurations": {

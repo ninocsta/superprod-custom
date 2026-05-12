@@ -64,6 +64,20 @@ export const APP_ROUTES: Routes = [
     canActivate: [FocusOverlayOpenGuard],
   },
   {
+    path: 'daily',
+    loadComponent: () =>
+      import('./routes/pages.routes').then((m) => m.DailyJournalPageComponent),
+    data: { page: 'daily' },
+    canActivate: [FocusOverlayOpenGuard],
+  },
+  {
+    path: 'daily/:dayStr',
+    loadComponent: () =>
+      import('./routes/pages.routes').then((m) => m.DailyJournalPageComponent),
+    data: { page: 'daily' },
+    canActivate: [FocusOverlayOpenGuard],
+  },
+  {
     path: 'schedule',
     loadComponent: () => import('./routes/pages.routes').then((m) => m.ScheduleComponent),
     data: { page: 'schedule' },

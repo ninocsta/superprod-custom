@@ -78,6 +78,29 @@ const _addInboxProjectIfNecessary = (state: ProjectState): ProjectState => {
   return state;
 };
 
+const _normalizeProjectDefaults = (state: ProjectState): ProjectState => {
+  let hasUpdates = false;
+  const entities: Record<string, Project | undefined> = {};
+  (state.ids as string[]).forEach((id) => {
+    const project = state.entities[id] as Project | undefined;
+    if (!project) {
+      entities[id] = project;
+      return;
+    }
+    if (project.isEnableDailyTracking === undefined) {
+      hasUpdates = true;
+      entities[id] = {
+        ...project,
+        isEnableDailyTracking: false,
+      };
+      return;
+    }
+    entities[id] = project;
+  });
+
+  return hasUpdates ? ({ ...state, entities } as ProjectState) : state;
+};
+
 export const initialProjectState: ProjectState = _addInboxProjectIfNecessary(
   projectAdapter.getInitialState({
     ids: [],
@@ -92,7 +115,9 @@ export const projectReducer = createReducer<ProjectState>(
   // ------------
   on(loadAllData, (oldState, { appDataComplete }) =>
     _addInboxProjectIfNecessary(
-      appDataComplete.project ? appDataComplete.project : oldState,
+      _normalizeProjectDefaults(
+        appDataComplete.project ? appDataComplete.project : oldState,
+      ),
     ),
   ),
 
@@ -193,6 +218,15 @@ export const projectReducer = createReducer<ProjectState>(
       {},
       currentProject.advancedCfg,
     );
+    const currentSectionData = advancedCfg[sectionKey] as
+      | Record<string, unknown>
+      | undefined;
+    const nextSectionData = data as Record<string, unknown>;
+    const isEntriesByDayMerge =
+      sectionKey === 'dailyJournal' &&
+      !!currentSectionData?.['entriesByDay'] &&
+      !!nextSectionData?.['entriesByDay'];
+
     return projectAdapter.updateOne(
       {
         id: projectId,
@@ -200,8 +234,19 @@ export const projectReducer = createReducer<ProjectState>(
           advancedCfg: {
             ...advancedCfg,
             [sectionKey]: {
-              ...advancedCfg[sectionKey],
+              ...currentSectionData,
               ...data,
+              ...(isEntriesByDayMerge
+                ? {
+                    entriesByDay: {
+                      ...(currentSectionData?.['entriesByDay'] as Record<
+                        string,
+                        unknown
+                      >),
+                      ...(nextSectionData?.['entriesByDay'] as Record<string, unknown>),
+                    },
+                  }
+                : {}),
             },
           },
         },

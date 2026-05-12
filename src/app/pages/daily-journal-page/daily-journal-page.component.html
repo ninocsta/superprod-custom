@@ -1,0 +1,78 @@
+<div class="page-wrapper">
+  <h1 class="done-headline mat-headline-5">{{ T.MH.DAILY | translate }}</h1>
+
+  <section class="daily-checkin">
+    <div class="daily-checkin__header">
+      <h2>{{ T.PDS.DAILY_CHECKIN | translate }}</h2>
+      <div class="daily-checkin__controls">
+        <button
+          (click)="navigateToPreviousDailyDay()"
+          [matTooltip]="T.PDS.GO_TO_PREVIOUS_DAY | translate"
+          mat-icon-button
+          type="button"
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <input
+          #dailyDayInput
+          (change)="onDailyDatePick(dailyDayInput.value)"
+          [attr.aria-label]="T.PDS.PICK_DAY | translate"
+          [value]="dayStrSignal()"
+          class="daily-checkin__date"
+          type="date"
+        />
+        <button
+          (click)="navigateToNextDailyDay()"
+          [matTooltip]="T.PDS.GO_TO_NEXT_DAY | translate"
+          mat-icon-button
+          type="button"
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="daily-checkin__fields">
+      <div class="daily-checkin__field">
+        <h3>{{ T.PDS.DAILY_YESTERDAY | translate }}</h3>
+        <inline-markdown
+          (changed)="updateDailyField('yesterday', $event)"
+          [isShowChecklistToggle]="false"
+          [isShowControls]="true"
+          [model]="dailyYesterday()"
+          [placeholderTxt]="T.PDS.DAILY_YESTERDAY | translate"
+        ></inline-markdown>
+      </div>
+      <div class="daily-checkin__field">
+        <h3>{{ T.PDS.DAILY_PLAN_TODAY | translate }}</h3>
+        <inline-markdown
+          (changed)="updateDailyField('todayPlan', $event)"
+          [isShowChecklistToggle]="false"
+          [isShowControls]="true"
+          [model]="dailyTodayPlan()"
+          [placeholderTxt]="T.PDS.DAILY_PLAN_TODAY | translate"
+        ></inline-markdown>
+      </div>
+      <div class="daily-checkin__field">
+        <h3>{{ T.PDS.DAILY_BLOCKERS | translate }}</h3>
+        <inline-markdown
+          (changed)="updateDailyField('blockers', $event)"
+          [isShowChecklistToggle]="false"
+          [isShowControls]="true"
+          [model]="dailyBlockers()"
+          [placeholderTxt]="T.PDS.DAILY_BLOCKERS | translate"
+        ></inline-markdown>
+      </div>
+      <div class="daily-checkin__field">
+        <h3>{{ T.PDS.DAILY_NOTES | translate }}</h3>
+        <inline-markdown
+          (changed)="updateDailyField('notes', $event)"
+          [isShowChecklistToggle]="false"
+          [isShowControls]="true"
+          [model]="dailyNotes()"
+          [placeholderTxt]="T.PDS.DAILY_NOTES | translate"
+        ></inline-markdown>
+      </div>
+    </div>
+  </section>
+</div>

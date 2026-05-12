@@ -244,4 +244,7 @@ export const DEFAULT_GLOBAL_CONFIG: GlobalConfigState = {
       syncFolderPath: 'super-productivity',
     },
   },
+  dailyJournal: {
+    entriesByDay: {},
+  },
 } as const;

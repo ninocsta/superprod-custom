@@ -393,6 +393,14 @@ export class MagicNavConfigService {
       });
     }
 
+    items.push({
+      type: 'route',
+      id: 'daily',
+      label: T.MH.DAILY,
+      icon: 'event_note',
+      route: '/daily',
+    });
+
     if (this.isSchedulerEnabled()) {
       items.push({
         type: 'route',

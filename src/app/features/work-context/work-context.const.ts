@@ -38,6 +38,9 @@ export const WORK_CONTEXT_DEFAULT_THEME: WorkContextThemeCfg = {
 export const WORK_CONTEXT_DEFAULT_COMMON: WorkContextCommon = {
   advancedCfg: {
     worklogExportSettings: WORKLOG_EXPORT_DEFAULTS,
+    dailyJournal: {
+      entriesByDay: {},
+    },
   },
   theme: WORK_CONTEXT_DEFAULT_THEME,
   // breakTime: {},

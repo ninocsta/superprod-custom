@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  inject,
-  Input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, Input } from '@angular/core';
 import { WorkContextType } from '../../features/work-context/work-context.model';
 import { T } from 'src/app/t.const';
 import { TODAY_TAG } from '../../features/tag/tag.const';
@@ -49,7 +42,6 @@ export class WorkContextMenuComponent implements OnInit {
   private _snackService = inject(SnackService);
   private _markdownService = inject(WorkContextMarkdownService);
   private _shareService = inject(ShareService);
-  private _cd = inject(ChangeDetectorRef);
   private _store = inject(Store);
 
   // TODO: Skipped for migration because:
@@ -288,6 +280,5 @@ export class WorkContextMenuComponent implements OnInit {
 
   private _setShareSupport(support: ShareSupport): void {
     this.shareSupport = support;
-    this._cd.markForCheck();
   }
 }
