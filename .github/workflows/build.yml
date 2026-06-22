@@ -36,7 +36,7 @@ jobs:
             fi
           } > /tmp/release-body.md
       - name: Create Draft Release
-        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           tag_name: ${{ github.ref_name }}
           draft: true
@@ -305,7 +305,7 @@ jobs:
 
       - name: Setup Chrome
         id: setup-chrome
-        uses: browser-actions/setup-chrome@4f8e94349a351df0f048634f25fec36c3c91eded # v2
+        uses: browser-actions/setup-chrome@2e1d749697dd1612b833dba4a722266286fbefcd # v2
 
       - name: Export Chrome path for Karma
         shell: pwsh
@@ -494,7 +494,7 @@ jobs:
           "
 
       - name: Publish signed Windows binaries to GitHub Release
-        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           files: |
